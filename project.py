@@ -4,7 +4,9 @@ def main():
     ...
 
 def binance_api(url : str, params : dict):
-    return validate_http_response(requests.get(url=url, params=params))
+    if response := validate_http_response(requests.get(url=url, params=params)) != None:
+        return check_error_codes(response= response)
+    return response
     
 
 def validate_http_response(response : requests.models.Response):
@@ -17,6 +19,12 @@ def validate_http_response(response : requests.models.Response):
             return None
         case _:
             return response
+        
+def check_error_codes(response : requests.models.Response):
+    r = response.json()
+    if "code" in r:
+        print(f"Error code {r["code"]}\n{r["msg"]}")
+        return None
 
 if __name__ == "__main__":
     main()

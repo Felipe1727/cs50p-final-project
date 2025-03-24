@@ -1,14 +1,8 @@
 import requests, math, logging
 
-logging.basicConfig(
-    filename="basic.log",
-    level=logging.DEBUG,
-    format="%(asctime)s %(levelname)s %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S"
-)
 
 def main():
-    binance_api(url="https://api.binance.com/api/v3/ticker/price", params={"wrong" : "wrong"})
+    ...
 
 def binance_api(url : str, params : dict):
     if response := validate_http_response(requests.get(url=url, params=params)) != None:
@@ -35,4 +29,10 @@ def check_error_codes(response : requests.models.Response):
     return response
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        filename="basic.log",
+        level=logging.DEBUG,
+        format="%(asctime)s %(levelname)s %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
     main()

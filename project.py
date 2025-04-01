@@ -1,11 +1,12 @@
-import requests, math, logging
+import requests, math, logging, pandas as pd
 
 
 def main():
     ...
 
-def binance_api(url : str, params : dict):
-    if response := validate_http_response(requests.get(url=url, params=params)) != None:
+def binance_api(endpoint : str, params = {}):
+    response = validate_http_response(requests.get(url="https://api.binance.com/api/v3" + endpoint, params=params))
+    if response != None:
         return check_error_codes(response= response)
     return response
     
@@ -27,6 +28,36 @@ def check_error_codes(response : requests.models.Response):
         logging.error(f"Error code {r["code"]}: {r["msg"]}")
         return None
     return response
+
+def trending():
+    response = binance_api("/ticker/24hr")
+    
+    df = pd.DataFrame(response.json())
+    
+    columns_range = [
+        "priceChange",
+        "priceChangePercent",
+        "weightedAvgPrice",
+        "prevClosePrice",
+        "lastPrice",
+        "lastQty",
+        "bidPrice",
+        "bidQty",
+        "askPrice",
+        "askQty",
+        "openPrice",
+        "highPrice",
+        "lowPrice",
+        "volume",
+        "quoteVolume"
+    ]
+
+    df = df[df["symbol"].str.endswith("USDC")]
+    df[columns_range] = df[columns_range].astype(float)
+    df = df.reset_index(drop=True)
+    return df
+        
+
 
 if __name__ == "__main__":
     logging.basicConfig(

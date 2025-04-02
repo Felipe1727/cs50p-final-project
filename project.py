@@ -2,7 +2,8 @@ import requests, math, logging, pandas as pd
 
 
 def main():
-    ...
+    df = trending(replace_invalid=True)
+    df.to_excel("df.xlsx")
 
 
 def binance_api(endpoint : str, params = {}, headers = {}):
@@ -73,6 +74,9 @@ def replace(df : pd.DataFrame):
 
     for i in usdt_df.index:
         df.loc[i] = usdt_df.loc[i]
+
+    df = df[df["count"] != 0]
+    df.set_index("symbol", drop = True, inplace= True)
     return df
 
 
